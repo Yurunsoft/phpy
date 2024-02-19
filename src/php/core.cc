@@ -28,6 +28,10 @@
 
 #include "stubs/phpy_core_arginfo.h"
 
+#if PY_VERSION_HEX < 0x03080000
+#define PyConfig _PyCoreConfig
+#else
+
 static zend_class_entry *PyCore_ce;
 static PyObject *module_builtins = nullptr;
 static PyObject *module_phpy = nullptr;
