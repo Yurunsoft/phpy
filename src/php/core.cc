@@ -214,7 +214,11 @@ PHP_MINIT_FUNCTION(phpy) {
     srand(time(NULL));
 
     // Init config
+#if PY_VERSION_HEX >= 0x03080000
     PyConfig_InitPythonConfig(&py_config);
+#else
+    py_config = _PyCoreConfig_INIT;
+#endif
     Py_InitializeFromConfig(&py_config);
 
     module_phpy = PyImport_ImportModule("phpy");
