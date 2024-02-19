@@ -28,17 +28,12 @@
 
 #include "stubs/phpy_core_arginfo.h"
 
-#if PY_VERSION_HEX < 0x03080000
-#define PyConfig _PyCoreConfig
-#endif
-
 static zend_class_entry *PyCore_ce;
 static PyObject *module_builtins = nullptr;
 static PyObject *module_phpy = nullptr;
 static std::unordered_map<const char *, PyObject *> builtin_functions;
 static std::unordered_map<PyObject *, void (*)(PyObject *)> zend_objects;
 static long eval_code_id = 0;
-static PyConfig py_config;
 
 using phpy::CallObject;
 using phpy::php::arg_1;
@@ -219,11 +214,15 @@ PHP_MINIT_FUNCTION(phpy) {
 
     // Init config
 #if PY_VERSION_HEX >= 0x03080000
+    PyConfig py_config;
     PyConfig_InitPythonConfig(&py_config);
-#else
-    py_config = _PyCoreConfig_INIT;
-#endif
     Py_InitializeFromConfig(&py_config);
+    PyConfig_Clear(&py_config);
+#else
+    _PyCoreConfig py_config = _PyCoreConfig_INIT;
+    _Py_InitializeFromConfig(&py_config);
+    _PyCoreConfig_Clear(&py_config);
+#endif
 
     module_phpy = PyImport_ImportModule("phpy");
     if (!module_phpy) {
@@ -252,11 +251,6 @@ PHP_MSHUTDOWN_FUNCTION(phpy) {
         Py_DECREF(kv.second);
     }
     builtin_functions.clear();
-#if PY_VERSION_HEX >= 0x03080000
-    PyConfig_Clear(&py_config);
-#else
-    _PyCoreConfig_Clear(&py_config);
-#endif
     Py_Finalize();
     return SUCCESS;
 }
