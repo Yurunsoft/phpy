@@ -252,7 +252,11 @@ PHP_MSHUTDOWN_FUNCTION(phpy) {
         Py_DECREF(kv.second);
     }
     builtin_functions.clear();
+#if PY_VERSION_HEX >= 0x03080000
     PyConfig_Clear(&py_config);
+#else
+    _PyCoreConfig_Clear(&py_config);
+#endif
     Py_Finalize();
     return SUCCESS;
 }
