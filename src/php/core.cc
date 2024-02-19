@@ -34,6 +34,7 @@ static PyObject *module_phpy = nullptr;
 static std::unordered_map<const char *, PyObject *> builtin_functions;
 static std::unordered_map<PyObject *, void (*)(PyObject *)> zend_objects;
 static long eval_code_id = 0;
+static PyConfig py_config;
 
 using phpy::CallObject;
 using phpy::php::arg_1;
@@ -211,7 +212,11 @@ PHP_MINIT_FUNCTION(phpy) {
         return FAILURE;
     }
     srand(time(NULL));
-    Py_InitializeEx(0);
+
+    // Init config
+    PyConfig_InitPythonConfig(&py_config);
+    Py_InitializeFromConfig(&py_config);
+
     module_phpy = PyImport_ImportModule("phpy");
     if (!module_phpy) {
         PyErr_Print();
@@ -239,6 +244,7 @@ PHP_MSHUTDOWN_FUNCTION(phpy) {
         Py_DECREF(kv.second);
     }
     builtin_functions.clear();
+    PyConfig_Clear(&py_config);
     Py_Finalize();
     return SUCCESS;
 }
