@@ -30,7 +30,7 @@
 
 #if PY_VERSION_HEX < 0x03080000
 #define PyConfig _PyCoreConfig
-#else
+#endif
 
 static zend_class_entry *PyCore_ce;
 static PyObject *module_builtins = nullptr;
