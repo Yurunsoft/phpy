@@ -214,26 +214,14 @@ PHP_MINIT_FUNCTION(phpy) {
 
     // Init config
 #if PY_VERSION_HEX >= 0x03080000
+    // doc: https://docs.python.org/3/c-api/init_config.html
     PyConfig py_config;
     PyConfig_InitPythonConfig(&py_config);
     py_config.install_signal_handlers = 0; // ignore signal
     Py_InitializeFromConfig(&py_config);
     PyConfig_Clear(&py_config);
 #else
-    _PyCoreConfig py_config;
-    // _PyCoreConfig_INIT cannot be used here because
-    // designer order for field ‘_PyCoreConfig::faulthandler’ does not match declaration order in ‘_PyCoreConfig’
-    py_config.install_signal_handlers = 0; // ignore signal
-    py_config.ignore_environment = -1;
-    py_config.use_hash_seed = -1;
-    py_config.coerce_c_locale = -1;
-    py_config.faulthandler = -1;
-    py_config.tracemalloc = -1;
-    py_config.utf8_mode = -1;
-    py_config.argc = -1;
-    py_config.nmodule_search_path = -1;
-    _Py_InitializeFromConfig(&py_config);
-    _PyCoreConfig_Clear(&py_config);
+    Py_InitializeEx(0);
 #endif
 
     module_phpy = PyImport_ImportModule("phpy");

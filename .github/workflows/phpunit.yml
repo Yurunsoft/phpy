@@ -43,7 +43,7 @@ jobs:
           php --ri phpy
       - name: Run phpunit tests
         env:
-          LC_ALL: POSIX
+          LC_ALL: POSIX # Do not remove this line, PR: https://github.com/swoole/phpy/pull/45
         run: |
           composer install
           composer test
