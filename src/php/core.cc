@@ -234,6 +234,7 @@ PHP_MINIT_FUNCTION(phpy) {
 //     _Py_InitializeFromConfig(&py_config);
 //     _PyCoreConfig_Clear(&py_config);
 // #endif
+    Py_InitializeEx(0);
 
     module_phpy = PyImport_ImportModule("phpy");
     if (!module_phpy) {
